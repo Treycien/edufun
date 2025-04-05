@@ -1,1 +1,74 @@
-<!DOCTYPE html><html><head><title>EduFun Game</title></head><body><h1>Game Placeholder</h1></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFun - Learn Through Play</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', sans-serif;
+      background: linear-gradient(to bottom, #f7faff, #d0e8ff);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #ff9900;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      max-width: 600px;
+    }
+
+    .nav a {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: #ffe066;
+      border-radius: 15px;
+      text-decoration: none;
+      color: #000;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .nav a:hover {
+      background: #ffd23f;
+    }
+
+    @media (max-width: 600px) {
+      .nav a {
+        flex: 1 1 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>EduFun</h1>
+  <p>Welcome to EduFun – a playful way to practise maths, spelling and logic!</p>
+
+  <div class="nav">
+    <a href="maths-quiz.html">Maths Quiz</a>
+    <a href="letter-match.html">Letter Match</a>
+    <a href="shape-sort.html">Shape Sort</a>
+    <a href="counting-game.html">Counting Game</a>
+    <a href="spelling-bee.html">Spelling Bee</a>
+    <a href="time-teller.html">Time Teller</a>
+  </div>
+</body>
+</html>
