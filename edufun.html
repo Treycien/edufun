@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduFun - Maths Quiz</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      background: #f2f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 {
+      color: #ff9900;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+    .options button {
+      background-color: #ffe066;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .options button:hover {
+      background-color: #ffd23f;
+    }
+    .check-btn {
+      background-color: #6edc83;
+      color: white;
+      font-weight: bold;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .score-board {
+      margin-top: 15px;
+    }
+    #certificate {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>EduFun</h1>
+    <label for="difficulty">Select difficulty:</label>
+    <select id="difficulty" onchange="setDifficulty()">
+      <option value="10">Easy (1–10)</option>
+      <option value="50">Medium (1–50)</option>
+      <option value="100">Hard (1–100)</option>
+    </select>
+    <div class="question" id="question">Loading question...</div>
+    <div class="options" id="options"></div>
+    <button class="check-btn" onclick="checkAnswer()">Check</button>
+    <div class="result" id="result"></div>
+    <div class="score-board" id="scoreBoard"></div>
+    <div id="certificate">
+      <h2>Congratulations!</h2>
+      <p>You answered 10 questions correctly!</p>
+      <button onclick="window.print()">Print Certificate</button>
+    </div>
+  </div>
+
+  <audio id="correct-sound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+  <audio id="wrong-sound" src="https://www.soundjay.com/button/beep-10.wav"></audio>
+
+  <script>
+    let currentQuestion = {};
+    let score = 0;
+    let totalQuestions = 0;
+    const maxQuestions = 1000000;
+    let selectedButton = null;
+    let difficultyMax = 10;
+
+    function setDifficulty() {
+      difficultyMax = parseInt(document.getElementById("difficulty").value);
+      score = 0;
+      totalQuestions = 0;
+      document.getElementById("scoreBoard").innerText = '';
+      document.getElementById("certificate").style.display = 'none';
+      generateQuestion();
+    }
+
+    function generateQuestion() {
+      const num1 = Math.floor(Math.random() * difficultyMax);
+      const num2 = Math.floor(Math.random() * difficultyMax);
+      const operations = ['+', '-', '*', '/'];
+      const operation = operations[Math.floor(Math.random() * operations.length)];
+      let answer;
+
+      switch (operation) {
+        case '+':
+          answer = num1 + num2;
+          break;
+        case '-':
+          answer = num1 - num2;
+          break;
+        case '*':
+          answer = num1 * num2;
+          break;
+        case '/':
+          answer = Math.floor(num1 / (num2 || 1));
+          break;
+      }
+
+      currentQuestion = { question: `What is ${num1} ${operation} ${num2}?`, answer };
+
+      document.getElementById("question").innerText = currentQuestion.question;
+      const optionsContainer = document.getElementById("options");
+      optionsContainer.innerHTML = "";
+
+      let correctPosition = Math.floor(Math.random() * 4);
+      for (let i = 0; i < 4; i++) {
+        const btn = document.createElement("button");
+        btn.onclick = () => selectOption(btn);
+        if (i === correctPosition) {
+          btn.innerText = answer;
+        } else {
+          let fakeAnswer;
+          do {
+            fakeAnswer = answer + Math.floor(Math.random() * 10 - 5);
+          } while (fakeAnswer === answer || fakeAnswer < 0);
+          btn.innerText = fakeAnswer;
+        }
+        optionsContainer.appendChild(btn);
+      }
+    }
+
+    function selectOption(button) {
+      const allButtons = document.querySelectorAll(".options button");
+      allButtons.forEach(btn => btn.style.border = "none");
+      button.style.border = "3px solid #6edc83";
+      selectedButton = button;
+    }
+
+    function checkAnswer() {
+      if (!selectedButton) {
+        alert("Please select an answer.");
+        return;
+      }
+
+      const selectedValue = parseInt(selectedButton.innerText);
+      const result = document.getElementById("result");
+      const correctSound = document.getElementById("correct-sound");
+      const wrongSound = document.getElementById("wrong-sound");
+
+      if (selectedValue === currentQuestion.answer) {
+        correctSound.play();
+        score++;
+        result.innerText = "Correct!";
+        result.style.color = "green";
+      } else {
+        wrongSound.play();
+        result.innerText = `Wrong! The correct answer was ${currentQuestion.answer}.`;
+        result.style.color = "red";
+      }
+
+      totalQuestions++;
+      document.getElementById("scoreBoard").innerText = `Score: ${score} / ${totalQuestions}`;
+
+      if (score === 10) {
+        document.getElementById("certificate").style.display = 'block';
+      }
+
+      if (totalQuestions < maxQuestions) {
+        setTimeout(() => {
+          result.innerText = "";
+          selectedButton = null;
+          generateQuestion();
+        }, 1000);
+      } else {
+        document.getElementById("question").innerText = "Quiz completed!";
+        document.getElementById("options").innerHTML = "";
+      }
+    }
+
+    generateQuestion();
+  </script>
+</body>
+</html>
